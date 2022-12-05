@@ -23,16 +23,23 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Register(ApiUserDto apiUserDto)
         {
-            var errors =await  _authManager.Register(apiUserDto);
-            if (errors.Any())
+            try
             {
-                foreach (var error in errors)
+                var errors = await _authManager.Register(apiUserDto);
+                if (errors.Any())
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError(error.Code, error.Description);
+                    }
+                    return BadRequest(errors);
                 }
-                return BadRequest(errors);
+                return Ok();
             }
-            return Ok();
+            catch(Exception)
+            {
+                return Problem($"Something wrong in {nameof(Register)}", statusCode: 500);
+            }
         }
         // api/account/login
         [HttpPost]
