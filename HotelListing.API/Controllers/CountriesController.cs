@@ -26,7 +26,7 @@ namespace HotelListing.API.Controllers
 
         // GET: api/Countries
         [HttpGet]
-        [Authorize]
+       // [Authorize]
         public async Task<ActionResult<IEnumerable<GetCountryDto>>> GetCountries()
         {
             var countries = await _countriesRepository.GetAllAsync();
@@ -93,7 +93,7 @@ namespace HotelListing.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Country>> PostCountry(CreateCountryDto createCountryDto)
         { 
             var country = _mapper.Map<Country>(createCountryDto);
