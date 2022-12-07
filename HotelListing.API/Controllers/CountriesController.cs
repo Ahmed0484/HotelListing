@@ -48,6 +48,7 @@ namespace HotelListing.API.Controllers
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<GetCountryDetailsDto>> GetCountry(int id)
         {
             var country = await _countriesRepository.GetDetails(id);

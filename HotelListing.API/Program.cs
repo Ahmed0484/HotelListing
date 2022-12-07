@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,41 @@ builder.Services.AddControllers().AddOData(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "HotelListing API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+        new OpenApiSecurityScheme { 
+            Description=@"jwt authentication header using Bearer scheme.
+                        Enter Bearer [space] then token",
+            Name="Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme= JwtBearerDefaults.AuthenticationScheme
+        });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id= JwtBearerDefaults.AuthenticationScheme
+                },
+                Scheme ="0auth2",
+                Name = JwtBearerDefaults.AuthenticationScheme,
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
 
 builder.Services.AddCors(options=>options.AddPolicy(
     "AllowAll", p => p.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()));
